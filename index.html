@@ -1,34 +1,98 @@
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PT. Investama Kalimantan Energi</title>
+
 <style>
-body {font-family: Arial; margin:0; background:#f4f4f4;}
-header {background:#0b3d91; color:white; padding:15px; text-align:center;}
-nav {background:#222; padding:10px; text-align:center;}
-nav button {margin:5px; padding:10px; color:white; background:#444; border:none; cursor:pointer;}
-section {display:none; padding:20px;}
-.active {display:block;}
-.card {background:white; padding:15px; margin-bottom:10px; border-radius:8px;}
-input, button {padding:8px; margin:5px;}
-.admin-panel {background:#ffecec; padding:15px; border-radius:8px;}
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#f4f6f9;
+}
+
+header{
+background:#0b3d91;
+color:white;
+padding:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:15px;
+text-align:left;
+}
+
+header img{
+width:70px;
+}
+
+nav{
+background:#111;
+text-align:center;
+padding:10px;
+}
+
+nav button{
+margin:5px;
+padding:10px 15px;
+background:#333;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:5px;
+}
+
+nav button:hover{
+background:#0b3d91;
+}
+
+section{
+display:none;
+padding:25px;
+}
+
+.active{
+display:block;
+}
+
+.card{
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+input, button{
+padding:8px;
+margin:5px;
+}
+
+.admin-panel{
+background:#fff0f0;
+padding:15px;
+border-radius:8px;
+}
 </style>
 </head>
 <body>
 
 <header>
+<img src="logo.png">
+<div>
 <h1>PT. Investama Kalimantan Energi</h1>
 <p>Mitra Penyalur & Transportir BBM Industri</p>
+</div>
 </header>
 
 <nav>
 <button onclick="showPage('home')">Home</button>
+<button onclick="showPage('tentang')">Tentang Kami</button>
+<button onclick="showPage('legalitas')">Legalitas</button>
 <button onclick="showPage('unit')">Data Unit</button>
 <button onclick="showPage('pengiriman')">Data Pengiriman</button>
+<button onclick="showPage('kontak')">Kontak</button>
 <button onclick="showPage('admin')">Admin</button>
 </nav>
 
@@ -36,8 +100,28 @@ input, button {padding:8px; margin:5px;}
 <section id="home" class="active">
 <h2>Profil Perusahaan</h2>
 <div class="card">
-<p>PT. Investama Kalimantan Energi adalah perusahaan mitra penyalur dan transportir BBM industri yang beroperasi di wilayah Kalimantan.</p>
+<p>PT. Investama Kalimantan Energi adalah perusahaan mitra penyalur dan transportir BBM industri di wilayah Kalimantan.</p>
 <p>Kami berkomitmen memberikan pelayanan distribusi energi yang aman, cepat, dan terpercaya.</p>
+</div>
+</section>
+
+<!-- TENTANG -->
+<section id="tentang">
+<h2>Tentang Kami</h2>
+<div class="card">
+<p>Kami bergerak dalam bidang distribusi dan transportasi BBM industri dengan standar operasional yang profesional dan aman.</p>
+<p>Didukung armada tangki dan tim berpengalaman.</p>
+</div>
+</section>
+
+<!-- LEGALITAS -->
+<section id="legalitas">
+<h2>Legalitas Perusahaan</h2>
+<div class="card">
+<p>NIB: xxxxxxxxx</p>
+<p>KBLI: 47302 / 49432</p>
+<p>Izin Usaha Niaga Umum BBM</p>
+<p>Kerjasama Mitra Penyalur</p>
 </div>
 </section>
 
@@ -53,9 +137,20 @@ input, button {padding:8px; margin:5px;}
 <div id="pengirimanList"></div>
 </section>
 
+<!-- KONTAK -->
+<section id="kontak">
+<h2>Kontak Kami</h2>
+<div class="card">
+<p>Alamat: Kalimantan</p>
+<p>Telepon: 08158841410</p>
+<p>Email: investamaenergi@gmail.com</p>
+</div>
+</section>
+
 <!-- ADMIN -->
 <section id="admin">
 <h2>Login Admin</h2>
+
 <div id="loginArea">
 <input type="password" id="password" placeholder="Masukkan Password">
 <button onclick="login()">Login</button>
@@ -63,6 +158,7 @@ input, button {padding:8px; margin:5px;}
 
 <div id="adminPanel" style="display:none;">
 <div class="admin-panel">
+
 <h3>Tambah Data Unit</h3>
 <input type="text" id="unitInput" placeholder="Contoh: Tangki 8000 KL - KH 1234 AB">
 <button onclick="addUnit()">Tambah</button>
@@ -70,9 +166,16 @@ input, button {padding:8px; margin:5px;}
 <h3>Tambah Data Pengiriman</h3>
 <input type="text" id="pengirimanInput" placeholder="Contoh: 16 Feb 2026 - 16 KL - PT ABC">
 <button onclick="addPengiriman()">Tambah</button>
+
 </div>
 </div>
 </section>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/628158841410" target="_blank"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:15px;border-radius:50%;text-decoration:none;font-size:20px;">
+💬
+</a>
 
 <script>
 const ADMIN_PASSWORD = "admin123";
@@ -113,8 +216,11 @@ function loadData(){
 let unitData = JSON.parse(localStorage.getItem("unitData")) || [];
 let pengirimanData = JSON.parse(localStorage.getItem("pengirimanData")) || [];
 
-document.getElementById("unitList").innerHTML = unitData.map(u=>"<div class='card'>"+u+"</div>").join("");
-document.getElementById("pengirimanList").innerHTML = pengirimanData.map(p=>"<div class='card'>"+p+"</div>").join("");
+document.getElementById("unitList").innerHTML =
+unitData.map(u=>"<div class='card'>"+u+"</div>").join("");
+
+document.getElementById("pengirimanList").innerHTML =
+pengirimanData.map(p=>"<div class='card'>"+p+"</div>").join("");
 }
 
 loadData();
