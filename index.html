@@ -21,44 +21,40 @@ input,select{padding:8px;margin:5px;}
 
 <header>
 <h1>PT. Investama Kalimantan Energi</h1>
-<p>Mitra Penyalur & Transportir BBM Industri</p>
+<p>Sistem Administrasi & Monitoring</p>
 </header>
 
 <nav>
 <button onclick="showPage('home')">Home</button>
 <button onclick="showPage('data')">Data</button>
-<button onclick="showPage('admin')">Admin</button>
+<button onclick="showPage('admin')">Login</button>
 <button onclick="logout()">Logout</button>
 </nav>
 
 <!-- HOME -->
 <section id="home" class="active">
-<h2>Selamat Datang</h2>
-<div class="card">
-<p>Sistem Monitoring Pengiriman & Administrasi</p>
-</div>
+<h2>Dashboard</h2>
+<div class="card">Selamat datang di sistem administrasi perusahaan.</div>
 </section>
 
 <!-- DATA -->
 <section id="data">
 <h2>Data Administrasi</h2>
 
-<h3>PO</h3>
-<div id="poList"></div>
+<div>
+<button onclick="showJenis('po')">PO</button>
+<button onclick="showJenis('sj')">Surat Jalan</button>
+<button onclick="showJenis('inv')">Invoice</button>
+<button onclick="showJenis('fp')">Faktur Pajak</button>
+</div>
 
-<h3>Surat Jalan</h3>
-<div id="sjList"></div>
-
-<h3>Invoice</h3>
-<div id="invList"></div>
-
-<h3>Faktur Pajak</h3>
-<div id="fpList"></div>
+<div id="dataContainer"></div>
 </section>
 
-<!-- ADMIN LOGIN -->
+<!-- LOGIN / ADMIN -->
 <section id="admin">
 <h2>Login</h2>
+
 <div id="loginArea">
 <input type="text" id="username" placeholder="Username">
 <input type="password" id="password" placeholder="Password">
@@ -77,14 +73,14 @@ input,select{padding:8px;margin:5px;}
 
 <input type="text" id="ptname" placeholder="Nama PT (contoh: PTA)">
 <input type="text" id="isiData" placeholder="Isi Data">
-
 <button onclick="tambahData()">Tambah</button>
+
 </div>
 </section>
 
 <script>
 
-// USER DATABASE
+// DATABASE USER
 const users = {
   "admin": {password:"admin123", role:"admin"},
   "pta": {password:"12345", role:"client", pt:"PTA"},
@@ -92,6 +88,7 @@ const users = {
 };
 
 let currentUser = null;
+let currentJenis = "po";
 
 function showPage(id){
 document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
@@ -112,7 +109,6 @@ document.getElementById("adminPanel").style.display="block";
 
 loadData();
 showPage('home');
-
 }else{
 alert("Username / Password Salah");
 }
@@ -120,39 +116,46 @@ alert("Username / Password Salah");
 
 function logout(){
 currentUser = null;
-alert("Logout");
+document.getElementById("adminPanel").style.display="none";
+alert("Logout berhasil");
+}
+
+function showJenis(jenis){
+currentJenis = jenis;
+loadData();
 }
 
 function tambahData(){
+if(!currentUser || currentUser.role !== "admin"){
+alert("Hanya admin yang bisa tambah data");
+return;
+}
+
 let jenis = document.getElementById("jenis").value;
-let pt = document.getElementById("ptname").value;
+let pt = document.getElementById("ptname").value.toUpperCase();
 let isi = document.getElementById("isiData").value;
 
 let semuaData = JSON.parse(localStorage.getItem("db")) || [];
 semuaData.push({jenis, pt, isi});
 localStorage.setItem("db", JSON.stringify(semuaData));
 
+alert("Data berhasil ditambahkan");
 loadData();
 }
 
 function loadData(){
 let semuaData = JSON.parse(localStorage.getItem("db")) || [];
-
-let po="", sj="", inv="", fp="";
+let html = "";
 
 semuaData.forEach(d=>{
-if(currentUser.role==="admin" || d.pt===currentUser.pt){
-if(d.jenis==="po") po+=`<div class='card'>${d.pt} - ${d.isi}</div>`;
-if(d.jenis==="sj") sj+=`<div class='card'>${d.pt} - ${d.isi}</div>`;
-if(d.jenis==="inv") inv+=`<div class='card'>${d.pt} - ${d.isi}</div>`;
-if(d.jenis==="fp") fp+=`<div class='card'>${d.pt} - ${d.isi}</div>`;
+if(currentUser && (currentUser.role==="admin" || d.pt===currentUser.pt)){
+if(d.jenis===currentJenis){
+html += `<div class="card"><b>${d.pt}</b> - ${d.isi}</div>`;
+}
 }
 });
 
-document.getElementById("poList").innerHTML = po;
-document.getElementById("sjList").innerHTML = sj;
-document.getElementById("invList").innerHTML = inv;
-document.getElementById("fpList").innerHTML = fp;
+document.getElementById("dataContainer").innerHTML = html;
 }
 
 </script>
