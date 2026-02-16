@@ -1,0 +1,124 @@
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT. Investama Kalimantan Energi</title>
+<style>
+body {font-family: Arial; margin:0; background:#f4f4f4;}
+header {background:#0b3d91; color:white; padding:15px; text-align:center;}
+nav {background:#222; padding:10px; text-align:center;}
+nav button {margin:5px; padding:10px; color:white; background:#444; border:none; cursor:pointer;}
+section {display:none; padding:20px;}
+.active {display:block;}
+.card {background:white; padding:15px; margin-bottom:10px; border-radius:8px;}
+input, button {padding:8px; margin:5px;}
+.admin-panel {background:#ffecec; padding:15px; border-radius:8px;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>PT. Investama Kalimantan Energi</h1>
+<p>Mitra Penyalur & Transportir BBM Industri</p>
+</header>
+
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('unit')">Data Unit</button>
+<button onclick="showPage('pengiriman')">Data Pengiriman</button>
+<button onclick="showPage('admin')">Admin</button>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+<h2>Profil Perusahaan</h2>
+<div class="card">
+<p>PT. Investama Kalimantan Energi adalah perusahaan mitra penyalur dan transportir BBM industri yang beroperasi di wilayah Kalimantan.</p>
+<p>Kami berkomitmen memberikan pelayanan distribusi energi yang aman, cepat, dan terpercaya.</p>
+</div>
+</section>
+
+<!-- DATA UNIT -->
+<section id="unit">
+<h2>Data Unit Armada</h2>
+<div id="unitList"></div>
+</section>
+
+<!-- DATA PENGIRIMAN -->
+<section id="pengiriman">
+<h2>Data Pengiriman Harian</h2>
+<div id="pengirimanList"></div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin">
+<h2>Login Admin</h2>
+<div id="loginArea">
+<input type="password" id="password" placeholder="Masukkan Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="adminPanel" style="display:none;">
+<div class="admin-panel">
+<h3>Tambah Data Unit</h3>
+<input type="text" id="unitInput" placeholder="Contoh: Tangki 8000 KL - KH 1234 AB">
+<button onclick="addUnit()">Tambah</button>
+
+<h3>Tambah Data Pengiriman</h3>
+<input type="text" id="pengirimanInput" placeholder="Contoh: 16 Feb 2026 - 16 KL - PT ABC">
+<button onclick="addPengiriman()">Tambah</button>
+</div>
+</div>
+</section>
+
+<script>
+const ADMIN_PASSWORD = "admin123";
+
+function showPage(id){
+document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function login(){
+let pass = document.getElementById("password").value;
+if(pass === ADMIN_PASSWORD){
+document.getElementById("loginArea").style.display="none";
+document.getElementById("adminPanel").style.display="block";
+alert("Login Berhasil");
+}else{
+alert("Password Salah");
+}
+}
+
+function addUnit(){
+let unit = document.getElementById("unitInput").value;
+let data = JSON.parse(localStorage.getItem("unitData")) || [];
+data.push(unit);
+localStorage.setItem("unitData", JSON.stringify(data));
+loadData();
+}
+
+function addPengiriman(){
+let kirim = document.getElementById("pengirimanInput").value;
+let data = JSON.parse(localStorage.getItem("pengirimanData")) || [];
+data.push(kirim);
+localStorage.setItem("pengirimanData", JSON.stringify(data));
+loadData();
+}
+
+function loadData(){
+let unitData = JSON.parse(localStorage.getItem("unitData")) || [];
+let pengirimanData = JSON.parse(localStorage.getItem("pengirimanData")) || [];
+
+document.getElementById("unitList").innerHTML = unitData.map(u=>"<div class='card'>"+u+"</div>").join("");
+document.getElementById("pengirimanList").innerHTML = pengirimanData.map(p=>"<div class='card'>"+p+"</div>").join("");
+}
+
+loadData();
+</script>
+
+</body>
+</html>
