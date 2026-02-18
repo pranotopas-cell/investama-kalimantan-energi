@@ -56,40 +56,47 @@ footer{background:#0d6efd;color:white;text-align:center;padding:20px;font-size:1
 
 <section id="harga">
 <div class="container">
-<h2>Harga Publish Pertamina</h2>
+<h2>Harga Publish BBM Industri Pertamina</h2>
 <p style="text-align:center;font-weight:bold">Periode Sekarang</p>
 
 <div class="harga-box">
 
-<div class="card" id="cardwilayah1">
-<h3>Wilayah I</h3>
-<small>Sumatra, Jawa, Bali </small>
-<p></p>
-<small class="keteranganKmr"></small>
+    <div class="card" id="cardwilayah1">
+        <h3>Wilayah I</h3>
+        <small>Sumatra, Jawa, Bali</small>
+        <p></p>
+        <small class="keteranganKmr"></small>
+    </div>
+
+    <div class="card" id="cardwilayah2">
+        <h3>Wilayah II</h3>
+        <small>Kalimantan</small>
+        <p></p>
+        <small class="keteranganKmr"></small>
+    </div>
+
+    <div class="card" id="cardwilayah3">
+        <h3>Wilayah III</h3>
+        <small>Sulawesi, NTB</small>
+        <p></p>
+        <small class="keteranganKmr"></small>
+    </div>
+
+    <div class="card" id="cardwilayah4">
+        <h3>Wilayah IV</h3>
+        <small>Maluku, NTT, Papua</small>
+        <p></p>
+        <small class="keteranganKmr"></small>
+    </div>
+
 </div>
 
-<div class="card" id="cardwilayah2">
-<h3>Wilayah II</h3>
-<small>Kalimantan</small>
-<p></p>
-<small class="keteranganKmr"></small>
+<!-- Tombol dipisah dari grid -->
+<div class="update-wrapper">
+    <button id="loginBtn" class="update-btn">🔐 Update</button>
 </div>
 
-<div class="card" id="cardwilayah3">
-<h3>Wilayah III</h3>
-<small>Sulawesi, NTB</small>
-<p></p>
-<small class="keteranganKmr"></small>
-</div>
-
-<div class="card" id="cardwilayah4">
-<h3>Wilayah IV</h3>
-<small>Maluku, NTT, Papua</small>
-<p></p>
-<small class="keteranganKmr"></small>
-</div>
-
-<button id="loginBtn" class="btn">🔐 Login Admin</button>
+</section>
 
 </div>
 </div>
@@ -221,6 +228,22 @@ loadHarga();
 
 </body>
 </html>
+
+.update-wrapper{
+    display:flex;
+    justify-content:center;
+    margin-top:25px;
+}
+
+.update-btn{
+    width:170px;
+    padding:10px 15px;
+    background:#FFC107;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
 
 
 
