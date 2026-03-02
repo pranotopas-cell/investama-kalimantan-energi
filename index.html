@@ -226,38 +226,9 @@ const db=getFirestore(app);
 const ref=doc(db,"hargaBBM","periode");
 const wilayah=["wilayah1","wilayah2","wilayah3","wilayah4"];
 
-// Fungsi otomatis rotasi harga tiap tanggal 1 & 15
-async function checkAutoUpdate(snap) {
-    const data = snap.data();
-    const today = new Date().getDate();
-    
-    // Cek jika hari ini tanggal 1 atau 15 DAN data 'sekarang' belum di-reset ke 0
-    const needsReset = wilayah.some(w => (data.sekarang[w] || 0) > 0);
-
-    if ((today === 1 || today === 15) && needsReset) {
-        const resetSekarang = {};
-        const pindahKeKemarin = {...data.sekarang};
-        
-        wilayah.forEach(w => { resetSekarang[w] = 0; });
-        
-        await updateDoc(ref, {
-            kemarin: pindahKeKemarin,
-            sekarang: resetSekarang
-        });
-        return true; // Berhasil update
-    }
-    return false;
-}
-
 async function loadHarga(){
-    let snap = await getDoc(ref);
+    const snap = await getDoc(ref);
     if(!snap.exists()) return;
-
-    // Jalankan pengecekan tanggal otomatis setiap web dibuka
-    const isRotated = await checkAutoUpdate(snap);
-    if(isRotated) {
-        snap = await getDoc(ref); // Ambil ulang data terbaru setelah di-reset
-    }
 
     const data = snap.data();
     for(let i=0;i<wilayah.length;i++){
@@ -268,18 +239,27 @@ async function loadHarga(){
         let warna,ket;
 
         if(now === 0) {
-            // Jika belum input harga sekarang (tampil 00)
             document.querySelector(`#card${w} p`).innerText=`Rp 0`;
             document.querySelector(`#card${w} .keteranganKmr`).innerText=`Prev: Rp ${prev.toLocaleString()}`;
             document.querySelector(`#card${w} .keteranganKmr`).style.color="gray";
         } else {
-            if(selisih>0){warna="red";ket=`▲ Naik Rp ${selisih.toLocaleString()}`;}
-            else if(selisih<0){warna="green";ket=`▼ Turun Rp ${Math.abs(selisih).toLocaleString()}`;}
-            else{warna="gray";ket="● Tidak berubah";}
+            if(selisih>0){
+                warna="#ff4d4d"; // Merah
+                ket=`▲ Naik Rp ${selisih.toLocaleString()}`;
+            }
+            else if(selisih<0){
+                warna="#2ecc71"; // Hijau
+                ket=`▼ Turun Rp ${Math.abs(selisih).toLocaleString()}`;
+            }
+            else{
+                warna="gray";
+                ket="● Tidak berubah";
+            }
             
             document.querySelector(`#card${w} p`).innerText=`Rp ${now.toLocaleString()}`;
-            document.querySelector(`#card${w} .keteranganKmr`).innerText=`Rp ${prev.toLocaleString()} ${ket}`;
+            document.querySelector(`#card${w} .keteranganKmr`).innerHTML=`<span style="color:gray; font-weight:normal">Prev: Rp ${prev.toLocaleString()}</span><br>${ket}`;
             document.querySelector(`#card${w} .keteranganKmr`).style.color=warna;
+            document.querySelector(`#card${w} .keteranganKmr`).style.fontWeight="bold";
         }
     }
 }
@@ -289,16 +269,29 @@ async function loginAdmin(){
     if(pass==="ikaen2022"){
         const snap=await getDoc(ref);
         const data=snap.data();
-        const baru={...data.sekarang};
+        
+        // Simpan harga saat ini ke 'kemarin'
+        const hargaKemarinBaru = {...data.sekarang};
+        const hargaSekarangBaru = {};
 
-        for(let i=0;i<wilayah.length;i++){
-            let input=prompt(`Harga ${wilayah[i]} sekarang:`, data.sekarang[wilayah[i]]);
-            if(input!==null){
-                baru[wilayah[i]]=parseInt(input)||0;
+        if(confirm("Update Harga? Harga 'Sekarang' akan dipindah menjadi 'Kemarin' secara otomatis.")){
+            for(let i=0;i<wilayah.length;i++){
+                let input=prompt(`Harga BARU untuk ${wilayah[i]}:`, data.sekarang[wilayah[i]]);
+                if(input!==null){
+                    hargaSekarangBaru[wilayah[i]]=parseInt(input)||0;
+                } else {
+                    hargaSekarangBaru[wilayah[i]]=data.sekarang[wilayah[i]];
+                }
             }
+            
+            await updateDoc(ref,{
+                kemarin: hargaKemarinBaru,
+                sekarang: hargaSekarangBaru
+            });
+            
+            alert("Berhasil diupdate!");
+            loadHarga();
         }
-        await updateDoc(ref,{sekarang:baru});
-        loadHarga();
     }else{alert("Password salah!");}
 }
 
